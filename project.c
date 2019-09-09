@@ -59,15 +59,106 @@ void parse_tracefile(char program[], char tracefile[]) {
 
 					
 		}
+		
+
+		else if ((n_words == 1) && (strcmp(word0, "reboot") == 0)) {
+			// NOTHING REQUIRED, DEFINITIONS FINISHED
 	
+		}	
 
+		else if ((n_words == 4) && (strcmp(word0, "process") == 0)) {
+			// START OF PROCESS EVENTS
+
+		
+		}
+		
+		else if ((n_words == 4) && (strcmp(word0, "i/o") == 0)) {
+			// I/O EVENT FOR CURRENT PROCESS
+			
+		} 
+
+		else if ((n_words == 2) && (strcmp(word0, "exit") == 0)) {
+			// LAST EVENT WE SEE FOR THIS PROCESS
+	
+		}
+
+		else if ((n_words == 1) && (strcmp(word0, "}") == 0)) {
+			// END OF CURRENT PROCESS
+		}
+
+		else {			
+			printf("Unrecognised input in file %s\n\t<line: %i>\t'%s'",
+				program, line_count, tracefile);
+
+			exit(EXIT_FAILURE);
+		}
+		
 	}
-
-
+	
+	fclose(fp);
 
 }
 
+void simulate_job_mix(int time_quantum) {
+	printf("Running simulate_job_mix(time_quantum = %i usecs)\n", time_quantum);
 
+}
 
+void print_usage(char program[]) {
+	printf("Usage: %s tracefile TQ-first [TQ-final TQ-increment]\n", program);
+	exit(EXIT_FAILURE);
 
+}
+
+int main(int argc, char * argv[]) {
+
+	int TQ0 = 0;
+	int TQfinal = 0;
+	int TQinc = 0;
+
+	// Tracefile + 3 values
+	if (argc == 5) {
+		TQ0 = atoi(argv[2]);
+		TQfinal = atoi(argv[3]);
+		TQinc = atoi(argv[4]);
+
+		if (TQ0 < 1 || TQfinal < TQ0 || TQinc < 1) {
+			print_usage(argv[0]);
+		}
+	}
+	
+	// Tracefile + 1 time value
+
+	else if (argc == 3) {
+		TQ0 = atoi(argv[2]);
+		
+		if (TQ0 < 1) {
+			print_usage(argv[0]);
+		}
+
+		TQfinal = TQ0;
+		TQinc = 1;
+
+	}
+
+	// Incorrect usage
+
+	else {
+		print_usage(argv[0]);
+	}
+	
+	parse_tracefile(argv[0], argv[1]);
+
+	// SUIMULATION HAPPENS HERE
+
+	for (int t = TQ0; t < TQfinal; t += TQinc) {
+		simulate_job_mix(t);
+	}	
+	
+	// print best here
+	// printf("Best TQ: %i \nTotal time: %i\n", time_optimal, time_total);
+
+	exit(EXIT_SUCCESS); 
+
+}
 
